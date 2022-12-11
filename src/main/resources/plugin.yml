@@ -1,0 +1,10 @@
+name: BananoChests
+version: '${project.version}'
+main: miner82.bananochests.BananoChestsMain
+api-version: 1.19
+authors: [Miner82]
+description: A lockable chests plugin
+commands:
+  reloadbananochestsconfig:
+    description: Used to reload the configuration at runtime.
+    aliases: [bcreloadcfg]

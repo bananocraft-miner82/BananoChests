@@ -1,0 +1,5 @@
+# Set the material type to use for a key here
+KeyMaterial: TRIPWIRE_HOOK
+
+# LockMode can be one of two values: Viewable or Sealed
+LockMode: Sealed
