@@ -4,7 +4,13 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="9be11e40-00f0-40ca-a1ad-633d16bf3704" name="Changes" comment="BananoChests Initial Commit v1.0.0" />
+    <list default="true" id="9be11e40-00f0-40ca-a1ad-633d16bf3704" name="Changes" comment="BananoChests Initial Commit v1.0.0">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/miner82/bananochests/classes/BaseLockableStorage.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/miner82/bananochests/classes/BaseLockableStorage.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/miner82/bananochests/events/OnInventoryMoveItemEvent.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/miner82/bananochests/events/OnInventoryMoveItemEvent.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/miner82/bananochests/events/OnStorageInteractEvent.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/miner82/bananochests/events/OnStorageInteractEvent.java" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />

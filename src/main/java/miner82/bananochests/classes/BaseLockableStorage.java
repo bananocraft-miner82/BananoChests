@@ -57,30 +57,12 @@ public class BaseLockableStorage implements ILockableStorage {
 
             try {
 
-                UUID creatorUUID = UUID.fromString(tileStateBlock.getPersistentDataContainer().get(this.creatorUUIDKey, PersistentDataType.STRING));
-
-                if(creatorUUID != null) {
-
-                    System.out.println("Creator identified: " + creatorUUID);
-
-                }
-                else {
-
-                    System.out.println("Creator not identifiable.");
-
-                }
-
-                return creatorUUID;
+                return UUID.fromString(tileStateBlock.getPersistentDataContainer().get(this.creatorUUIDKey, PersistentDataType.STRING));
 
             }
             catch (Exception ex) {
                 // Do nothing
             }
-
-        }
-        else {
-
-            System.out.println("Creator not present in persistent data container.");
 
         }
 
@@ -94,30 +76,12 @@ public class BaseLockableStorage implements ILockableStorage {
 
             try {
 
-                UUID ownerUUID = UUID.fromString(tileStateBlock.getPersistentDataContainer().get(this.ownerUUIDKey, PersistentDataType.STRING));
-
-                if(ownerUUID != null) {
-
-                    System.out.println("Owner identified: " + ownerUUID);
-
-                }
-                else {
-
-                    System.out.println("Owner not identifiable.");
-
-                }
-
-                return ownerUUID;
+                return UUID.fromString(tileStateBlock.getPersistentDataContainer().get(this.ownerUUIDKey, PersistentDataType.STRING));
 
             }
             catch (Exception ex) {
                 // Do nothing
             }
-
-        }
-        else {
-
-            System.out.println("Owner not present in persistent data container.");
 
         }
 
@@ -135,15 +99,12 @@ public class BaseLockableStorage implements ILockableStorage {
 
                 LockState lockState = LockState.valueOf(storedLockState);
 
-                System.out.println("Lock State retrieved as " + lockState.name());
-
                 this.lockState = lockState;
 
             }
             catch (Exception ex) {
 
                 System.out.println("Lock State could not be retrieved, or is invalid");
-                System.out.println("Stored value: " + storedLockState);
 
                 ex.printStackTrace();
 
@@ -154,7 +115,6 @@ public class BaseLockableStorage implements ILockableStorage {
         }
         else {
 
-            System.out.println("Lock State not present in persistent data container.");
             this.lockState = LockState.Unlocked;
 
         }

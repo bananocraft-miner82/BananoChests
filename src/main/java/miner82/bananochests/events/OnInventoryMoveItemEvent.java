@@ -34,26 +34,29 @@ public class OnInventoryMoveItemEvent implements Listener {
 
                 TileState tileState = (TileState) holder;
 
-                ILockableStorage storage = StorageManager.getLockableStorage(this.configEngine, tileState.getBlock());
+                if(StorageManager.IsStorageBlock(tileState.getBlock().getType())) {
 
-                if(storage != null
-                     && storage.isLocked()) {
+                    ILockableStorage storage = StorageManager.getLockableStorage(this.configEngine, tileState.getBlock());
 
-                    if(destinationType == InventoryType.HOPPER) {
+                    if (storage != null
+                            && storage.isLocked()) {
 
-                        event.setCancelled(true);
-                        return;
-
-                    }
-                    else if(destinationType == InventoryType.PLAYER
-                             && event.getDestination().getHolder() instanceof Player) {
-
-                        Player viewer = (Player) event.getDestination().getHolder();
-
-                        if(!storage.isAllowed(viewer)) {
+                        if (destinationType == InventoryType.HOPPER) {
 
                             event.setCancelled(true);
                             return;
+
+                        } else if (destinationType == InventoryType.PLAYER
+                                && event.getDestination().getHolder() instanceof Player) {
+
+                            Player viewer = (Player) event.getDestination().getHolder();
+
+                            if (!storage.isAllowed(viewer)) {
+
+                                event.setCancelled(true);
+                                return;
+
+                            }
 
                         }
 
