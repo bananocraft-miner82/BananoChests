@@ -25,7 +25,7 @@ public class BaseLockableStorage implements ILockableStorage {
     protected UUID owner = null;
     protected LockState lockState = LockState.Unlocked;
 
-    private final List<Player> allowedPlayers = new ArrayList<>();
+    private final List<OfflinePlayer> allowedPlayers = new ArrayList<>();
     protected TileState tileStateBlock;
 
     public BaseLockableStorage(ConfigEngine configEngine, TileState tileStateBlock) {
@@ -42,14 +42,6 @@ public class BaseLockableStorage implements ILockableStorage {
         owner = retrieveOwner(tileStateBlock);
         lockState = retrieveLockState(tileStateBlock);
 
-        if(lockState == LockState.LockedToShare) {
-
-            //allowedPlayers = chestSigns.stream()
-            //        .flatMap(s -> getPlayersFromSign(s).stream())
-            //        .collect(Collectors.toList());
-
-        }
-
     }
 
     @Override
@@ -65,12 +57,30 @@ public class BaseLockableStorage implements ILockableStorage {
 
             try {
 
-                return UUID.fromString(tileStateBlock.getPersistentDataContainer().get(this.creatorUUIDKey, PersistentDataType.STRING));
+                UUID creatorUUID = UUID.fromString(tileStateBlock.getPersistentDataContainer().get(this.creatorUUIDKey, PersistentDataType.STRING));
+
+                if(creatorUUID != null) {
+
+                    System.out.println("Creator identified: " + creatorUUID);
+
+                }
+                else {
+
+                    System.out.println("Creator not identifiable.");
+
+                }
+
+                return creatorUUID;
 
             }
             catch (Exception ex) {
                 // Do nothing
             }
+
+        }
+        else {
+
+            System.out.println("Creator not present in persistent data container.");
 
         }
 
@@ -84,12 +94,30 @@ public class BaseLockableStorage implements ILockableStorage {
 
             try {
 
-                return UUID.fromString(tileStateBlock.getPersistentDataContainer().get(this.ownerUUIDKey, PersistentDataType.STRING));
+                UUID ownerUUID = UUID.fromString(tileStateBlock.getPersistentDataContainer().get(this.ownerUUIDKey, PersistentDataType.STRING));
+
+                if(ownerUUID != null) {
+
+                    System.out.println("Owner identified: " + ownerUUID);
+
+                }
+                else {
+
+                    System.out.println("Owner not identifiable.");
+
+                }
+
+                return ownerUUID;
 
             }
             catch (Exception ex) {
                 // Do nothing
             }
+
+        }
+        else {
+
+            System.out.println("Owner not present in persistent data container.");
 
         }
 
@@ -101,18 +129,50 @@ public class BaseLockableStorage implements ILockableStorage {
 
         if(tileStateBlock.getPersistentDataContainer().has(this.lockStateKey, PersistentDataType.STRING)) {
 
-            return LockState.valueOf(tileStateBlock.getPersistentDataContainer().get(this.lockStateKey, PersistentDataType.STRING));
+            String storedLockState = tileStateBlock.getPersistentDataContainer().get(this.lockStateKey, PersistentDataType.STRING);
+
+            try {
+
+                LockState lockState = LockState.valueOf(storedLockState);
+
+                System.out.println("Lock State retrieved as " + lockState.name());
+
+                this.lockState = lockState;
+
+            }
+            catch (Exception ex) {
+
+                System.out.println("Lock State could not be retrieved, or is invalid");
+                System.out.println("Stored value: " + storedLockState);
+
+                ex.printStackTrace();
+
+                this.lockState = LockState.Unlocked;
+
+            }
+
+        }
+        else {
+
+            System.out.println("Lock State not present in persistent data container.");
+            this.lockState = LockState.Unlocked;
 
         }
 
-        return LockState.Unlocked;
+        return this.lockState;
 
     }
 
     @Override
     public OfflinePlayer getCreator() {
 
-        return Bukkit.getOfflinePlayer(this.creator);
+        if(this.creator != null) {
+
+            return Bukkit.getOfflinePlayer(this.creator);
+
+        }
+
+        return null;
 
     }
 
@@ -140,20 +200,14 @@ public class BaseLockableStorage implements ILockableStorage {
     @Override
     public OfflinePlayer getOwner() {
 
-        return Bukkit.getPlayer(this.owner);
+        if(this.owner != null) {
 
-    }
+            return Bukkit.getOfflinePlayer(this.owner);
 
-    @Override
-    public boolean lockToOwner(Player player) {
-        ////TODO
-        return this.lockState == LockState.LockedToOwner;
-    }
+        }
 
-    @Override
-    public boolean lockToShare(Player player) {
-        ////TODO
-        return this.lockState == LockState.LockedToShare;
+        return null;
+
     }
 
     public boolean isOwner(Player player) {
@@ -187,7 +241,7 @@ public class BaseLockableStorage implements ILockableStorage {
     @Override
     public boolean isLocked() {
 
-        return lockState != LockState.Unlocked;
+        return this.lockState != LockState.Unlocked;
 
     }
 
@@ -208,14 +262,10 @@ public class BaseLockableStorage implements ILockableStorage {
     @Override
     public boolean lock(Player player) {
 
-        if (isLocked()) {
-
-            return false;
-
-        }
-
-        if(hasCreator()
-             && !isCreator(player)) {
+        if(player == null
+            || isLocked()
+            || (hasCreator()
+                 && !isCreator(player))) {
 
             return false;
 
@@ -223,7 +273,7 @@ public class BaseLockableStorage implements ILockableStorage {
 
         String uuid = player.getUniqueId().toString();
 
-        this.lockState = LockState.LockedToOwner;
+        this.lockState = LockState.Locked;
 
         tileStateBlock.getPersistentDataContainer().set(ownerUUIDKey, PersistentDataType.STRING, uuid);
         tileStateBlock.update();
@@ -258,12 +308,12 @@ public class BaseLockableStorage implements ILockableStorage {
     @Override
     public boolean unlock(Player player) {
 
-        if (!isLocked()) {
-            return false;
-        }
+        if(player == null
+                || !isLocked()
+                || !isOwner(player)) {
 
-        if (!isOwner(player)) {
             return false;
+
         }
 
         this.lockState = LockState.Unlocked;
@@ -286,12 +336,85 @@ public class BaseLockableStorage implements ILockableStorage {
         // - They are an OP (holding shift to avoid accidents)
         // - The storage is not locked
 
-        return !isLocked()
-                && (this.creator == null
+        return (this.creator == null
                     || this.owner == null
                     || isOwner(player)
                     || (player.isOp() && player.isSneaking()));
 
+    }
+
+    @Override
+    public boolean share(Player requester, OfflinePlayer player) {
+
+        if(!isOwner(requester)
+            || allowedPlayers.stream().anyMatch(e -> e.getUniqueId().equals(player.getUniqueId()))) {
+
+            return false;
+
+        }
+
+        this.allowedPlayers.add(player);
+
+        return saveAllowedPlayers();
+
+    }
+
+    @Override
+    public boolean unshare(Player requester, OfflinePlayer player) {
+
+        if(!isOwner(requester)
+            || allowedPlayers.stream().noneMatch(e -> e.getUniqueId().equals(player.getUniqueId()))) {
+
+            return false;
+
+        }
+
+        this.allowedPlayers.remove(player);
+
+        return saveAllowedPlayers();
+
+    }
+
+    @Override
+    public boolean unshareAll(Player requester) {
+
+        if(!isOwner(requester)) {
+
+            return false;
+
+        }
+
+        this.allowedPlayers.clear();
+
+        return saveAllowedPlayers();
+
+    }
+
+    private boolean saveAllowedPlayers() {
+
+        ///// TODO
+
+        return false;
+
+    }
+
+    @Override
+    public List<OfflinePlayer> getShareList(Player requester) {
+
+        if(this.allowedPlayers != null) {
+
+            return this.allowedPlayers;
+
+        }
+
+        return new ArrayList<>();
+
+    }
+
+    @Override
+    public boolean autoLockOnPlace(Player player)
+    {
+        return false;
     }
 
 }

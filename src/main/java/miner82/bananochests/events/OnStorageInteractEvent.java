@@ -40,11 +40,18 @@ public class OnStorageInteractEvent implements Listener {
 
             if (storageEntity != null) {
 
+                if(event.getItem() == null) {
+
+                    System.out.println("No item held.");
+
+                }
+
                 // Lock/unlock
                 if (event.getAction() == Action.RIGHT_CLICK_BLOCK
                         && player.isSneaking()
-                        && event.getItem() != null
-                        && event.getItem().getType().equals(this.configEngine.getKeyMaterial())
+                        && event.getItem() == null
+                        //&& event.getItem() != null
+                        //&& event.getItem().getType().equals(this.configEngine.getKeyMaterial())
                         && (storageEntity.isOwner(player)
                              || storageEntity.isCreator(player)
                              || storageEntity.getCreator() == null)) {
@@ -89,6 +96,8 @@ public class OnStorageInteractEvent implements Listener {
                         }
 
                     }
+
+                    event.setCancelled(true);
 
                 }
 

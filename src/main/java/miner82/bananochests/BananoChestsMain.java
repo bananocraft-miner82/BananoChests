@@ -1,6 +1,7 @@
 package miner82.bananochests;
 
 import miner82.bananochests.commands.*;
+import miner82.bananochests.commands.tabcompleters.ChestInteractCommandTabCompleter;
 import miner82.bananochests.config.ConfigEngine;
 import miner82.bananochests.events.*;
 import org.bukkit.Bukkit;
@@ -28,28 +29,9 @@ public final class BananoChestsMain extends JavaPlugin implements Listener {
         Bukkit.getPluginManager().registerEvents(new OnInventoryMoveItemEvent(this.configEngine), this);
 
         getCommand("reloadbananochestsconfig").setExecutor(new ReloadConfigurationCommand(this.configEngine));
+        getCommand("securechest").setExecutor(new ChestInteractCommand(this.configEngine));
 
-        //getCommand("enablebananominer").setExecutor(new EnableBananoMinerCommand(this.configEngine));
-        //getCommand("removeprizeblock").setExecutor(new RemovePrizeBlockCommand(this.configEngine));
-        //getCommand("setprizeblock").setExecutor(new SetPrizeBlockCommand(this.configEngine));
-        //getCommand("setrandomprize").setExecutor(new SetRandomPrizeCommand(this.configEngine));
-        //getCommand("setbaseprize").setExecutor(new SetBasePrizeCommand(this.configEngine));
-        //getCommand("setdailyearningcap").setExecutor(new SetMaximumDailyEarnCommand(this.configEngine));
-        //getCommand("setbananominerdebug").setExecutor(new SetBananoMinerDebugCommand(this.configEngine));
-        //getCommand("banhammer").setExecutor(new BanHammerCommand(this.configEngine));
-        //getCommand("printbmconfig").setExecutor(new PrintConfigInfoCommand(this.configEngine));
-        //getCommand("showminingstats").setExecutor(new DisplayPlayerMiningStatsCommand(this.configEngine));
-
-        //getCommand("enablebananominer").setTabCompleter(new EnableBananoMinerTabCompleter(this.configEngine));
-        //getCommand("removeprizeblock").setTabCompleter(new RemovePrizeBlockTabCompleter(this.configEngine));
-        //getCommand("setprizeblock").setTabCompleter(new SetPrizeBlockTabCompleter(this.configEngine));
-        //getCommand("setbananominerdebug").setTabCompleter(new SetBananoMinerDebugTabCompleter(this.configEngine));
-        //getCommand("banhammer").setTabCompleter(new SetBananoMinerDebugTabCompleter(this.configEngine));
-        //getCommand("printbmconfig").setTabCompleter(new PrintConfigInfoTabCompleter(this.configEngine));
-        //getCommand("showminingstats").setTabCompleter(new DisplayPlayerMiningStatsTabCompleter(this.configEngine));
-
-        // Delayed to ensure vault is initialised by the time we try to call it
-        //Bukkit.getScheduler().runTaskLater(this, this::setupBananoMiner, 5);
+        getCommand("securechest").setTabCompleter(new ChestInteractCommandTabCompleter());
 
     }
 

@@ -3,6 +3,7 @@ package miner82.bananochests.events;
 import miner82.bananochests.classes.StorageManager;
 import miner82.bananochests.config.ConfigEngine;
 import miner82.bananochests.interfaces.ILockableStorage;
+import org.bukkit.ChatColor;
 import org.bukkit.block.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -37,8 +38,15 @@ public class OnStoragePlaceEvent implements Listener {
             if(storage != null) {
 
                 storage.setCreator(player);
+                storage.setOwner(player);
 
-                System.out.println("Lockable storage created... assigning owner as " + player.getName());
+                if(storage.autoLockOnPlace(player)) {
+
+                    storage.lock(player);
+
+                    player.sendMessage(ChatColor.AQUA + "This " + storage.getDescription() + " has been automatically locked.");
+
+                }
 
             }
 

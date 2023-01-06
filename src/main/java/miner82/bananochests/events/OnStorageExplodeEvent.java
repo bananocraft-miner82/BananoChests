@@ -35,8 +35,6 @@ public class OnStorageExplodeEvent implements Listener {
 
                     event.blockList().remove(block);
 
-                    System.out.println("Player ");
-
                     System.out.println("Entity [" + event.getEntity().getName() + "] tried to explode "
                             + block.getType() + " at " + block.getX()
                             + " / " + block.getY() + " / " + block.getZ() + ".");

@@ -4,14 +4,14 @@ import miner82.bananochests.classes.LockState;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
+import java.util.List;
+
 public interface ILockableStorage {
 
     OfflinePlayer getCreator();
     void setCreator(Player player);
     void setOwner(Player player);
     OfflinePlayer getOwner();
-    boolean lockToOwner(Player player);
-    boolean lockToShare(Player player);
     boolean unlock(Player player);
     boolean lock(Player player);
     void toggleLock(Player player);
@@ -22,5 +22,14 @@ public interface ILockableStorage {
     LockState getLockState();
     String getDescription();
     boolean canBreak(Player player);
+
+    boolean share(Player requester, OfflinePlayer player);
+    boolean unshare(Player requester, OfflinePlayer player);
+    boolean unshareAll(Player requester);
+    List<OfflinePlayer> getShareList(Player requester);
+
+    boolean autoLockOnPlace(Player player);
+
+
 
 }

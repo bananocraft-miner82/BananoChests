@@ -32,7 +32,6 @@ public class OnInventoryMoveItemEvent implements Listener {
 
             if(holder instanceof TileState) {
 
-                System.out.println("It's a tilestate");
                 TileState tileState = (TileState) holder;
 
                 ILockableStorage storage = StorageManager.getLockableStorage(this.configEngine, tileState.getBlock());

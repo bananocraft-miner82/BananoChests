@@ -25,20 +25,11 @@ public class OnStorageBreakEvent implements Listener {
 
         if (StorageManager.IsStorageBlock(block.getType())) {
 
-            System.out.println("Block being broken is a storage type block...");
-
             ILockableStorage storage = StorageManager.getLockableStorage(this.configEngine, block);
 
             if(storage != null) {
 
-                System.out.println("Lockable storage identified...");
-                System.out.println("Locked: " + storage.isLocked());
-                System.out.println("Is Owner: " + storage.isOwner(player));
-                System.out.println("Is Sneaking OP: " + (player.isOp() && player.isSneaking()));
-
                 if(!storage.canBreak(player)) {
-
-                    System.out.println("Storage is locked and is not being broken by the owner or an OP - cancel the event.");
 
                     event.setCancelled(true);
 

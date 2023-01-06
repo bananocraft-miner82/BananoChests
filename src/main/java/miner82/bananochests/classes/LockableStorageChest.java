@@ -23,58 +23,6 @@ public class LockableStorageChest extends BaseLockableStorage {
     }
 
     @Override
-    public boolean lockToOwner(Player player) {
-
-        if (isLocked()) {
-
-            return false;
-
-        }
-
-        setOwner(player);
-
-        boolean lockedToOwner = super.lockToOwner(player);
-
-        if (lockedToOwner
-              && slaveChest.isPresent()) {
-
-            slaveChest.get().getPersistentDataContainer()
-                    .set(ownerUUIDKey, PersistentDataType.STRING, player.getUniqueId().toString());
-            slaveChest.get().update();
-
-        }
-
-        return lockedToOwner;
-
-    }
-
-    @Override
-    public boolean lockToShare(Player player) {
-
-        if (isLocked()) {
-
-            return false;
-
-        }
-
-        String uuid = player.getUniqueId().toString();
-
-        boolean lockedToShare = super.lockToShare(player);
-
-        if (lockedToShare
-              && slaveChest.isPresent()) {
-
-            slaveChest.get().getPersistentDataContainer()
-                    .set(ownerUUIDKey, PersistentDataType.STRING, uuid);
-            slaveChest.get().update();
-
-        }
-
-        return lockedToShare;
-
-    }
-
-    @Override
     public boolean lock(Player player) {
 
         if (isLocked()) {
@@ -205,6 +153,28 @@ public class LockableStorageChest extends BaseLockableStorage {
     private boolean isDoubleChest(Chest chest) {
 
         return chest.getInventory() instanceof DoubleChestInventory;
+
+    }
+
+    @Override
+    public boolean autoLockOnPlace(Player player)
+    {
+        if(player.getPersistentDataContainer().has(this.configEngine.getPlayerALChestKey(), PersistentDataType.SHORT)) {
+
+            return player.getPersistentDataContainer().get(this.configEngine.getPlayerALChestKey(), PersistentDataType.SHORT).equals(1);
+
+        }
+        else {
+
+            return super.configEngine.getAutoLockChest();
+
+        }
+    }
+
+    @Override
+    public String getDescription() {
+
+        return "Chest";
 
     }
 

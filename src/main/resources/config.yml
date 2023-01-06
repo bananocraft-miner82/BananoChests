@@ -1,5 +1,7 @@
-# Set the material type to use for a key here
-KeyMaterial: TRIPWIRE_HOOK
-
 # LockMode can be one of two values: Viewable or Sealed
 LockMode: Sealed
+
+# Define whether storage should be automatically set to Locked when placed down.
+AutoLockShulker: false
+AutoLockChest: false
+AutoLockBarrel: false

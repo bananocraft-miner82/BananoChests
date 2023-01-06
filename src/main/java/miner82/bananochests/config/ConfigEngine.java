@@ -5,6 +5,8 @@ import miner82.bananochests.classes.LockMode;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Player;
+import org.bukkit.persistence.PersistentDataType;
 
 public class ConfigEngine {
 
@@ -12,13 +14,24 @@ public class ConfigEngine {
     private final String KEY_OWNERUUID = "owneruuid";
     private final String KEY_LOCKSTATE = "lockstate";
 
+    private final String KEY_PLAYER_AL_BARREL = "autolockbarrel";
+    private final String KEY_PLAYER_AL_CHEST = "autolockchest";
+    private final String KEY_PLAYER_AL_SHULKER = "autolockshulker";
+
     private final BananoChestsMain main;
     private final NamespacedKey creatorUUIDKey;
     private final NamespacedKey ownerUUIDKey;
     private final NamespacedKey lockStateKey;
 
-    private Material keyMaterial = Material.TRIPWIRE_HOOK;
+    private final NamespacedKey playerALBarrelKey;
+    private final NamespacedKey playerALChestKey;
+    private final NamespacedKey playerALShulkerKey;
+
     private LockMode lockMode = LockMode.Viewable;
+
+    private boolean autoLockShulker = false;
+    private boolean autoLockChest = false;
+    private boolean autoLockBarrel = false;
 
     public ConfigEngine(BananoChestsMain main) {
 
@@ -27,6 +40,10 @@ public class ConfigEngine {
         creatorUUIDKey = new NamespacedKey(main, KEY_CREATORRUUID);
         ownerUUIDKey = new NamespacedKey(main, KEY_OWNERUUID);
         lockStateKey = new NamespacedKey(main, KEY_LOCKSTATE);
+
+        playerALBarrelKey = new NamespacedKey(main, KEY_PLAYER_AL_BARREL);
+        playerALChestKey = new NamespacedKey(main, KEY_PLAYER_AL_CHEST);
+        playerALShulkerKey = new NamespacedKey(main, KEY_PLAYER_AL_SHULKER);
 
         initialiseConfig(main.getConfig());
 
@@ -38,23 +55,47 @@ public class ConfigEngine {
     public NamespacedKey getOwnerUUIDKey() {
         return this.ownerUUIDKey;
     }
+
     public NamespacedKey getLockStateKey() {
         return this.lockStateKey;
     }
 
-    public Material getKeyMaterial() {
-        return this.keyMaterial;
-    }
+    public NamespacedKey getPlayerALBarrelKey() { return this.playerALBarrelKey; }
+    public NamespacedKey getPlayerALChestKey() { return this.playerALChestKey; }
+    public NamespacedKey getPlayerALShulkerKey() { return this.playerALShulkerKey; }
 
-    public void setKeyMaterial(Material material) {
+    public boolean hasPlayerALBarrel(Player player) {
 
-        if(this.keyMaterial != material) {
+        if(player != null) {
 
-            this.keyMaterial = material;
-
-            save();
+            return player.getPersistentDataContainer().getOrDefault(this.playerALBarrelKey, PersistentDataType.SHORT, (short)0).equals((short)1);
 
         }
+
+        return false;
+
+    }
+
+    public boolean hasPlayerALChest(Player player) {
+
+        if(player != null) {
+
+            return player.getPersistentDataContainer().getOrDefault(this.playerALChestKey, PersistentDataType.SHORT, (short)0).equals((short)1);
+
+        }
+
+        return false;
+
+    }
+    public boolean hasPlayerALShulker(Player player) {
+
+        if(player != null) {
+
+            return player.getPersistentDataContainer().getOrDefault(this.playerALShulkerKey, PersistentDataType.SHORT, (short)0).equals((short)1);
+
+        }
+
+        return false;
 
     }
 
@@ -74,14 +115,63 @@ public class ConfigEngine {
 
     }
 
+    public boolean getAutoLockBarrel() {
+        return this.autoLockBarrel;
+    }
+
+    public void setAutoLockBarrel(boolean value) {
+
+        if(this.autoLockBarrel != value) {
+
+            this.autoLockBarrel = value;
+
+            save();
+
+        }
+
+    }
+
+    public boolean getAutoLockChest() {
+        return this.autoLockChest;
+    }
+
+    public void setAutoLockChest(boolean value) {
+
+        if(this.autoLockChest != value) {
+
+            this.autoLockChest = value;
+
+            save();
+
+        }
+
+    }
+
+    public boolean getAutoLockShulker() {
+        return this.autoLockShulker;
+    }
+
+    public void setAutoLockShulker(boolean value) {
+
+        if(this.autoLockShulker != value) {
+
+            this.autoLockShulker = value;
+
+            save();
+
+        }
+
+    }
+
     public boolean save() {
 
         FileConfiguration config = this.main.getConfig();
 
-        //config.set("EnableBananoMiner", this.enableBananoMiner);
-
-        config.set("KeyMaterial", this.keyMaterial.name());
         config.set("LockMode", this.lockMode.name());
+
+        config.set("AutoLockShulker", this.autoLockShulker);
+        config.set("AutoLockChest", this.autoLockChest);
+        config.set("AutoLockBarrel", this.autoLockBarrel);
 
         this.main.saveConfig();
 
@@ -99,28 +189,6 @@ public class ConfigEngine {
         System.out.println("Initialising BananoChests Config...");
 
         if(configuration != null) {
-
-            if(configuration.contains("KeyMaterial")) {
-
-                try {
-
-                    this.keyMaterial = Material.valueOf(configuration.getString("KeyMaterial"));
-
-                }
-                catch (Exception ex) {
-
-                    System.out.println("Invalid KeyMaterial value... using default instead.");
-
-                }
-
-            }
-            else {
-
-                this.keyMaterial = Material.TRIPWIRE_HOOK;
-
-            }
-
-            System.out.println("- Key Material set: " + this.keyMaterial.name());
 
             if(configuration.contains("LockMode")) {
 
@@ -144,6 +212,71 @@ public class ConfigEngine {
 
             System.out.println("- Locking mode set: " + this.lockMode.name());
 
+            if(configuration.contains("AutoLockBarrel")) {
+
+                try {
+
+                    this.autoLockBarrel = configuration.getBoolean("AutoLockBarrel");
+
+                }
+                catch (Exception ex) {
+
+                    System.out.println("Invalid AutoLockBarrel value... using default instead.");
+
+                }
+
+            }
+            else {
+
+                this.autoLockBarrel = false;
+
+            }
+
+            System.out.println("- Auto-Lock Barrel mode set: " + this.autoLockBarrel);
+
+            if(configuration.contains("AutoLockChest")) {
+
+                try {
+
+                    this.autoLockChest = configuration.getBoolean("AutoLockChest");
+
+                }
+                catch (Exception ex) {
+
+                    System.out.println("Invalid AutoLockChest value... using default instead.");
+
+                }
+
+            }
+            else {
+
+                this.autoLockChest = false;
+
+            }
+
+            System.out.println("- Auto-Lock Chest mode set: " + this.autoLockChest);
+
+            if(configuration.contains("AutoLockShulker")) {
+
+                try {
+
+                    this.autoLockShulker = configuration.getBoolean("AutoLockShulker");
+
+                }
+                catch (Exception ex) {
+
+                    System.out.println("Invalid AutoLockShulker value... using default instead.");
+
+                }
+
+            }
+            else {
+
+                this.autoLockShulker = false;
+
+            }
+
+            System.out.println("- Auto-Lock Shulker mode set: " + this.autoLockShulker);
 
         }
 
