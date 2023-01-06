@@ -8,6 +8,8 @@ commands:
   reloadbananochestsconfig:
     description: Used to reload the configuration at runtime.
     aliases: [bcreloadcfg]
+    permission: reloadconfig
+    permission-message: You do not have permission to use this command!
   securechest:
     description: Used to lock/unlock/share/view the status of the targeted storage block.
     aliases: [sc, chest, barrel, shulker]
